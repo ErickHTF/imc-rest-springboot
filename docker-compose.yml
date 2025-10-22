@@ -1,0 +1,15 @@
+services:
+
+  postgres:
+    image: postgres:13.22
+    container_name: imc_rest
+    restart: always
+    environment:
+      POSTGRES_USER: imc_user
+      POSTGRES_PASSWORD: imc_pass
+      POSTGRES_DB: crudusers
+    ports:
+      - "5433:5432"
+
+volumes:
+  postgres_data:
