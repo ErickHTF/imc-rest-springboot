@@ -5,8 +5,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class ImcService {
 
-    public double calculateImc(double weight, double height) {
-        return weight / (height * height);
+    public String calculateImc(double weight, double height) {
+        double imc = weight / (height * height);
+        String classification = classifyImc(imc);
+        String formattedImc = String.format("%.2f", imc);
+
+        return "IMC: " + formattedImc + ", Classification: " + classifyImc(imc);
     }
 
     public String classifyImc(double imc) {

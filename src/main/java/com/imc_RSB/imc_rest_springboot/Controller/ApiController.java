@@ -61,12 +61,6 @@ public class ApiController {
     public String calculateImc(
             @RequestBody ImcRequest request)
     {
-        double imc = ImcService.calculateImc(request.getWeight(), request.getHeight());
-        String classification = ImcService.classifyImc(imc);
-
-        String formattedImc = String.format("%.2f", imc);
-
-        return "Your IMC is: " + formattedImc +
-                ". Classification: " + classification;
+        return ImcService.calculateImc(request.getWeight(), request.getHeight());
     }
 }
