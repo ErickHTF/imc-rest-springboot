@@ -18,110 +18,102 @@ src/main/java/com/imc_RSB/imc_rest_springboot/
 ├── Service
 │   └── ImcService.java
 └── ImcRestSpringbootApplication.java
-
-## Endpoints
-
-### 1. `GET /`
-Retorna uma mensagem de teste.
-
-**Resposta:**
 ```
-Hello World
+### 1. GET /  
+Retorna mensagem simples para teste    
+**Exemplo de Resposta:**  
 ```
+ Hello World
+```
+### 2. GET /users  
+Lista todos os usuários cadastrados.  
+**Exemplo de Resposta:**
 
----
-
-### 2. `GET /users`
-Lista todos os usuários cadastrados.
-
-**Resposta:**
-```json
+```
 [
-  {
-    "id": 1,
-    "name": "João",
-    "age": 30,
-    "weight": 80.0,
-    "height": 1.75
-  }
+	{
+		"id": 1,
+		"name": "Bob",
+		"age": 28,
+		"weight": 72.5,
+		"height": 1.8
+	},
+	{
+		"id": 2,
+		"name": "John",
+		"age": 28,
+		"weight": 72.5,
+		"height": 1.8
+	}
 ]
 ```
 
----
-
-### 3. `POST /save`
-Cadastra um novo usuário.
-
-**Payload:**
-```json
+### 3. POST /save  
+Salva um novo usuário.  
+Payload de Requisição:
+```
 {
-  "name": "Maria",
-  "age": 25,
-  "weight": 65.0,
-  "height": 1.68
+  "name": "John",
+  "age": 28,
+  "weight": 72.5,
+  "height": 1.80
 }
 ```
-**Resposta:**
+
+### 4. PUT /update/{id}  
+Atualiza os dados de um usuário existente.  
+Exemplo de URL:
 ```
-User Saved
+PUT /update/1
 ```
-
----
-
-### 4. `PUT /update/{id}`
-Atualiza os dados de um usuário pelo ID.
-
-**Payload:**
-```json
+Payload de Requisição:
+```
 {
-  "name": "Maria Silva",
-  "age": 26,
-  "weight": 66.0,
-  "height": 1.68
+  "name": "John Doe",
+  "age": 29,
+  "weight": 73.0,
+  "height": 1.80
 }
 ```
-**Resposta:**
-```
-User Updated
-```
 
----
-
-### 5. `DELETE /delete/{id}`
-Remove um usuário pelo ID.
-
-**Resposta:**
+### 5. DELETE /delete/{id}  
+Remove um usuário pelo ID.  
+Exemplo de URL:
 ```
-User ID Deleted: {id}
+DELETE /delete/1
+```
+Exemplo de Resposta:
+```
+User ID Deleted: 1
 ```
 
----
-
-### 6. `POST /calculateImc`
-Calcula o IMC a partir do peso e altura informados.
-
-**Payload:**
-```json
+### 6. POST /calculateImc  
+Calcula o IMC com base no peso e altura informados.  
+Payload de Requisição:
+```
 {
-  "weight": 70.0,
-  "height": 1.70
+  "weight": 70,
+  "height": 1.75
 }
 ```
-**Resposta:**
+Exemplo de Resposta:
 ```
-IMC: 24.22 - Classificação: Peso normal
+{
+  "IMC": "22.86",
+  "classification": "Normal weight"
+}
 ```
-
----
-
 ## Sobre o cálculo do IMC
 
 A fórmula utilizada é:  
 **IMC = peso / (altura * altura)**
 
 Classificação:
-- IMC < 18.5: Abaixo do peso
-- 18.5 <= IMC < 24.9: Peso normal
-- 25.0 <= IMC < 29.9: Sobrepeso
-- 30.0 <= IMC < 39.9: Obesidade
-- IMC >= 40: Obesidade grave
+- IMC < 18.5: Underweight
+- 18.5 <= IMC < 24.9: Normal weight
+- 25.0 <= IMC < 29.9: Overweight
+- 30.0 <= IMC < 39.9: Obesity
+- IMC >= 40: Severe obesity
+---
+
+A API estará disponível em [http://localhost:8080](http://localhost:8080).
