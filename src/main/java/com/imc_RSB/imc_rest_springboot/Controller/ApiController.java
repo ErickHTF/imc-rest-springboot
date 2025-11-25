@@ -10,8 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import com.imc_RSB.imc_rest_springboot.Exception.ResourceNotFoundException;
+import org.springframework.http.ResponseEntity;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.imc_RSB.imc_rest_springboot.Service.ImcService;
 
@@ -38,7 +42,8 @@ public class ApiController {
             description = "Retorna um usuário pelo ID.")
     @GetMapping(value = "/{id}")
     public Users getUsersById(@PathVariable Long id){
-        return usersRepo.findById(id).get();
+        return usersRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found on: " + id));
     }
 
     @Operation(summary = "Create User",
@@ -52,27 +57,29 @@ public class ApiController {
     @Operation(summary = "Update  User",
             description = "Atualiza os dados de um usuário.")
     @PutMapping(value = "/{id}")
-    public String updateUsers( @PathVariable Long id, @RequestBody Users user){
-        Users updateUser = usersRepo.findById(id).get();
+    public ResponseEntity<Users> updateUsers(@PathVariable Long id, @RequestBody Users user){
+        Users updateUser = usersRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found on: " + id));
         updateUser.setName(user.getName());
         updateUser.setAge(user.getAge());
         updateUser.setWeight(user.getWeight());
         updateUser.setHeight(user.getHeight());
 
-        usersRepo.save(updateUser);
-
-        return "User Updated!";
+        final Users updatedUser = usersRepo.save(updateUser);
+        return ResponseEntity.ok(updatedUser);
     }
 
     @Operation(summary = "Delete User",
             description = "Remove um novo usuário.")
     @DeleteMapping(value = "/{id}")
-    public String deleteUsers(@PathVariable Long id){
-        Users deleteUser = usersRepo.findById(id).get();
+    public Map<String, Boolean> deleteUsers(@PathVariable Long id){
+        Users deleteUser = usersRepo.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found on: " + id));
         usersRepo.delete(deleteUser);
 
-
-        return "User ID Deleted: " +id;
+        Map<String, Boolean> response = new HashMap<>();
+        response.put("deleted", Boolean.TRUE);
+        return response;
     }
 
     @Autowired
