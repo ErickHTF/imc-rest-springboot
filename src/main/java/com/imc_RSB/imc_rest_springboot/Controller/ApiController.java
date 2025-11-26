@@ -2,7 +2,6 @@ package com.imc_RSB.imc_rest_springboot.Controller;
 
 import com.imc_RSB.imc_rest_springboot.DTO.ImcRequest;
 import com.imc_RSB.imc_rest_springboot.Models.Users;
-import com.imc_RSB.imc_rest_springboot.Repo.UsersRepo;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -10,21 +9,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import com.imc_RSB.imc_rest_springboot.Exception.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
-
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import com.imc_RSB.imc_rest_springboot.Service.ImcService;
+import com.imc_RSB.imc_rest_springboot.Service.UserService;
 
 @RestController
 @RequestMapping("/api/users")
 public class ApiController {
 
     @Autowired
-    private UsersRepo usersRepo;
+    private UserService userService;
 
     @Operation(summary = "Get All Users",
             description = "Retorna todos os usuários cadastrados.")
@@ -34,23 +30,25 @@ public class ApiController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @GetMapping(value = "/all")
-    public List<Users> getUsersRepo() {
-        return usersRepo.findAll();
+    public List<Users> getAllUsers() {
+
+        return userService.findAllUsers();
     }
 
     @Operation(summary = "Get Users by ID",
             description = "Retorna um usuário pelo ID.")
     @GetMapping(value = "/{id}")
     public Users getUsersById(@PathVariable Long id){
-        return usersRepo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found on: " + id));
+
+        return userService.findUserById(id);
     }
 
     @Operation(summary = "Create User",
             description = "Cria um novo usuário.")
     @PostMapping()
     public  String saveUsers(@RequestBody Users users){
-        usersRepo.save(users);
+        userService.saveUser(users);
+
         return "User Saved!";
     }
 
@@ -58,32 +56,22 @@ public class ApiController {
             description = "Atualiza os dados de um usuário.")
     @PutMapping(value = "/{id}")
     public ResponseEntity<Users> updateUsers(@PathVariable Long id, @RequestBody Users user){
-        Users updateUser = usersRepo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found on: " + id));
-        updateUser.setName(user.getName());
-        updateUser.setAge(user.getAge());
-        updateUser.setWeight(user.getWeight());
-        updateUser.setHeight(user.getHeight());
+        Users updatedUser = userService.updateUser(id, user);
 
-        final Users updatedUser = usersRepo.save(updateUser);
         return ResponseEntity.ok(updatedUser);
     }
 
     @Operation(summary = "Delete User",
             description = "Remove um novo usuário.")
     @DeleteMapping(value = "/{id}")
-    public Map<String, Boolean> deleteUsers(@PathVariable Long id){
-        Users deleteUser = usersRepo.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found on: " + id));
-        usersRepo.delete(deleteUser);
+    public ResponseEntity<Void> deleteUsers(@PathVariable Long id){
+        userService.deleteUser(id);
 
-        Map<String, Boolean> response = new HashMap<>();
-        response.put("deleted", Boolean.TRUE);
-        return response;
+        return ResponseEntity.noContent().build();
     }
 
     @Autowired
-    private ImcService ImcService;
+    private ImcService imcService;
 
     @Operation(summary = "Calculate BMI",
             description = "Calcula um IMC.")
