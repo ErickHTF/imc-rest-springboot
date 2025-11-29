@@ -79,6 +79,6 @@ public class ApiController {
     public String calculateImc(
             @RequestBody ImcRequest request)
     {
-        return ImcService.calculateImc(request.getWeight(), request.getHeight());
+        return imcService.calculateImc(request.getWeight(), request.getHeight());
     }
 }
